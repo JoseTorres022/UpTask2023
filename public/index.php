@@ -20,12 +20,12 @@ $router->get('/olvide',[LoginController::class,'olvide']);
 $router->post('/olvide',[LoginController::class,'olvide']);
 
 //Colocal el nuevo password
-$router->get('/restablecer',[LoginController::class,'restablecer']);
-$router->post('/restablecer',[LoginController::class,'restablecer']);
+$router->get('/reestablecer',[LoginController::class,'reestablecer']);
+$router->post('/reestablecer',[LoginController::class,'reestablecer']);
 
 //Confirmacion de cuenta
 $router->get('/mensaje',[LoginController::class,'mensaje']);
-$router->post('/confirmar',[LoginController::class,'confirmar']);
+$router->get('/confirmar',[LoginController::class,'confirmar']);
 
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
