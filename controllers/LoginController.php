@@ -15,17 +15,21 @@ class LoginController{
         ]);
        }
     public static function logout(){
-
+        echo "Desde Login";
 
     }
 
     public static function crear(Router $router){
-        if($_SERVER['REQUEST_METHOD']==='POST'){
 
+        $usuario=new Usuario;
+        
+        if($_SERVER['REQUEST_METHOD']==='POST'){
+            $usuario->sincronizar($_POST);
         }
         //render a la vista
         $router->render('auth/crear',[
-            'titulo' => 'Crea tu cuenta en UpTask'
+            'titulo' => 'Crea tu cuenta en UpTask',
+            'usuario'=>$usuario
         ]);
     }
 

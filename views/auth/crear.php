@@ -10,7 +10,7 @@
             <!-- Campo de nombre -->
             <div class="campo">
                 <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" placeholder="Tu Nombre" name="nombre" />
+                <input type="text" id="nombre" placeholder="Tu Nombre" name="nombre" value="<?php echo $usuario->nombre;?>" />
             </div>
 
             <!-- Campo de email -->
