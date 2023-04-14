@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 
+use Classes\Email;
 use Model\Usuario;
 use MVC\Router;
 class LoginController{
@@ -33,6 +34,38 @@ class LoginController{
 
             //Alerta (tipo JSON), para la validacion de los datos del usuario
             $alertas = $usuario->validarNuevaCuenta();
+
+            //Validar usaurios
+            if(empty($alertas)){
+                Usuario::setAlerta('error', 'El usuario ya esta registrado');
+                $alertas=Usuario::getAlertas();
+            }else{
+                //Hash del usaurio
+                $usuario->hashPassword();
+
+                //Eliminar password2
+                unset($usuario->password2);
+
+                //Generar el token para el usuario
+                $usuario->crearToken();
+                
+                //Confirmar usuario
+                //$usuario->confirmado=0;
+                //Debugueando el usuario en el navegador (tipo JSON)
+                //debuguear($usuario);
+
+                //Crear un nuevo usuario
+                $resultado =$usuario->guardar();
+
+                //Enviar email al usuario
+                $email = new Email($usuario->email,$usuario->nombre,$usuario->token);
+
+                debuguear($email);
+                if($resultado){
+                    header('Location: /mensaje');
+                }              
+            }
+            
 
             //Se muestra en vista del navegador (tipo JSON)
             //debuguear($alertas);

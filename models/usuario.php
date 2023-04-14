@@ -12,7 +12,7 @@ class Usuario extends ActiveRecord{
         $this->password=$args['password'] ??'';
         $this->password2=$args['password2'] ??'';
         $this->token=$args['token'] ??'';
-        $this->confirmado=$args['confirmado'] ??'';
+        $this->confirmado=$args['confirmado'] ?? 0;
     }
     //Validacion para cuentas nuevaas
     public function validarNuevaCuenta(){
@@ -40,5 +40,15 @@ class Usuario extends ActiveRecord{
             self::$alertas['error'][]='Los Passwords son diferentes';
         }
         return self::$alertas;
+    }
+
+    //Hashea el password del usuario
+    public function hashPassword(){
+$this->password=password_hash($this->password, PASSWORD_BCRYPT);
+    }
+
+    //Generar un token para el usuario
+    public function crearToken(){
+        $this->token=uniqid();
     }
 }
