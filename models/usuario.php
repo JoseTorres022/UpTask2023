@@ -10,7 +10,35 @@ class Usuario extends ActiveRecord{
         $this->nombre=$args['nombre'] ??'';
         $this->email=$args['email'] ??'';
         $this->password=$args['password'] ??'';
+        $this->password2=$args['password2'] ??'';
         $this->token=$args['token'] ??'';
         $this->confirmado=$args['confirmado'] ??'';
+    }
+    //Validacion para cuentas nuevaas
+    public function validarNuevaCuenta(){
+        //Validar nombre de usuario  u obligatorio
+        if(!$this->nombre){
+            self::$alertas['error'][]='El Nombre de Usuario es Obligatorio';
+        }
+
+        //Validar email de usuario u obligatorio
+        if(!$this->email){
+            self::$alertas['error'][]='El Email de Usuario es Obligatorio';
+        }
+
+        //Validar password de usuario u obligatorio
+        if(!$this->password){
+            self::$alertas['error'][]='El Password de Usuario es Obligatorio';
+        }
+
+        //Validar extension de l password
+        if(strlen ($this->password)<6){
+            self::$alertas['error'][]='El Password por lo menos debe ser de 6 caracterres';
+        }
+        //Validar sin los dos password son diferentes o iguales
+        if($this->password !== $this->password2){
+            self::$alertas['error'][]='Los Passwords son diferentes';
+        }
+        return self::$alertas;
     }
 }

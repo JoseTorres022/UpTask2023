@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 
+use Model\Usuario;
 use MVC\Router;
 class LoginController{
     public static function login(Router $router){
@@ -20,16 +21,27 @@ class LoginController{
     }
 
     public static function crear(Router $router){
-
+        $alertas=[];
         $usuario=new Usuario;
         
         if($_SERVER['REQUEST_METHOD']==='POST'){
+            //Todo lo que se escriba en el formulario se quede (excepto el password)
             $usuario->sincronizar($_POST);
+
+            //Debuguear el usaurio
+            //debuguear($usuario);
+
+            //Alerta (tipo JSON), para la validacion de los datos del usuario
+            $alertas = $usuario->validarNuevaCuenta();
+
+            //Se muestra en vista del navegador (tipo JSON)
+            //debuguear($alertas);
         }
         //render a la vista
         $router->render('auth/crear',[
             'titulo' => 'Crea tu cuenta en UpTask',
-            'usuario'=>$usuario
+            'usuario'=>$usuario,
+            'alertas'=>$alertas
         ]);
     }
 
