@@ -6,8 +6,6 @@ use Model\Usuario;
 use MVC\Router;
 class LoginController{
     public static function login(Router $router){
-
-
         if($_SERVER['REQUEST_METHOD']==='POST'){
             
         }
@@ -33,10 +31,48 @@ class LoginController{
             //debuguear($usuario);
 
             //Alerta (tipo JSON), para la validacion de los datos del usuario
+            //BLOQUE DE RACTORIZACION DEL CODIGO
+            //ESPERO QUE FUNCIONES XD :3 JAJAJJA
             $alertas = $usuario->validarNuevaCuenta();
-
-            //Validar usaurios
             if(empty($alertas)){
+                $existeUsuario=Usuario::where('email',$usuario->email);
+
+            if($existeUsuario){
+                Usuario::setAlerta('error','El Usuario ya esta registrado');
+                $alertas=Usuario::getAlertas();
+            }else{
+                //Hashear el password
+                $usuario->hashPassword();
+
+                //Eliminar password2
+                unset($usuario->password2);
+
+                //Generar el token para el usuario
+                $usuario->crearToken();
+
+
+                //Crear un nuevo usuario
+                $resultado =$usuario->guardar();
+
+                //Enviar email al usuario
+                $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
+                $email->enviarConfirmacion();
+                
+
+                //Redirigir al usaurio a la vista de confirmacion de su registro
+                if($resultado){
+                    header('Location: /mensaje');
+                }
+            }
+            }
+
+
+
+
+            //BLOQUE DE VALIDACION DEL USUARIO
+            //FUNCIONA CORRECTAMENTE PERO, MARCA USUAIRO REGRISTADO PREVIAMENTE
+            //Validar usaurios
+            /*if(empty($alertas)){
                 Usuario::setAlerta('error', 'El usuario ya esta registrado');
                 $alertas=Usuario::getAlertas();
             }else{
@@ -64,7 +100,7 @@ class LoginController{
                 if($resultado){
                     header('Location: /mensaje');
                 }              
-            }
+            }*///if else primario
             
 
             //Se muestra en vista del navegador (tipo JSON)
