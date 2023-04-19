@@ -28,6 +28,9 @@ $mail->setFrom('cuentas@uptask.com');
 $mail->addAddress('cuentas@uptask.com', 'uptask.com');
 $mail->Subjet='Confirma tu cuenta';
 
+$mail->isHTML(TRUE);
+$mail->CharSet='UTF-8';
+
 $contenido='<html>';
 $contenido .="<p><strong>Hola " . $this->nombre . "</strong> Has creado tu cuenta en Uptask, 
 solo debes confirmala en el siguiente enlace:</p>";
