@@ -14,7 +14,9 @@ class LoginController{
             'titulo' => 'Iniciar Sesión'
         ]);
        }
-    public static function logout(){
+
+    
+       public static function logout(){
         echo "Desde Login";
 
     }
@@ -115,24 +117,96 @@ class LoginController{
     }
 
     public static function olvide(Router $router){
-        if($_SERVER['REQUEST_METHOD']==='POST'){
 
+        $alertas=[];
+
+        if($_SERVER['REQUEST_METHOD']==='POST'){
+            $usuario=new Usuario($_POST);
+            $alertas=$usuario->validarEmail();
+
+            if(empty($alertas)){
+                //Buscar el usuario
+                $usuario=Usuario::where('email',$usuario->email);
+
+                if($usuario && $usuario->confirmado){
+                    //Generar un nuevo token
+                    $usuario->crearToken();
+                    unset($usuario->password2);
+
+                    //Actualizar el usuario
+                    $usuario->guardar();
+
+                    //Enviar el email
+                    $email=new Email($usuario->email, $usuario->nombre, $usuario->token);
+                    $email->enviarInstrucciones();
+
+                    //Imprimir la alerta
+                    Usuario::setAlerta('exito','Hemos enviado las instrucciones a tu email');
+                }else{
+                    Usuario::setAlerta('error','EL Usuario no existe o no esta confirmado');
+                }
+            }
         }
+
+        $alertas=Usuario::getAlertas();
+
         //Muestra la vista
         $router->render('auth/olvide',[
-            'titulo'=> 'Olvide mi Password'
+            'titulo'=> 'Olvide mi Password',
+            'alertas'=>$alertas
         ]);
     }
-    public static function reestablecer(Router $router){
-        if($_SERVER['REQUEST_METHOD']==='POST'){
 
+    public static function reestablecer(Router $router){
+        $token=s($_GET['token']);
+        $mostrar=true;
+
+        //Si no hay token, se reenvia a la pagina principal
+        if(!$token) header('Localtion: /');
+
+        //Identificar usuairo con este token
+        $usuario=Usuario::where('token', $token);
+
+        //Alerta al usuario
+        if(empty($usuario)){
+            Usuario::setAlerta('error', 'Token No Valido');
+            $mostrar=false;
+        }
+        
+        if($_SERVER['REQUEST_METHOD']==='POST'){
+            //Añadir el nuevo password
+            $usuario->sincronizar($_POST);
+
+            //Validar el password
+            $alertas=$usuario->validarPassword();
+
+            if(empty($alertas)){
+                //Hashear el nuevo usuario
+                $usuario->hashPassword();
+
+                //Eliminar el token
+                $usuario->token=null;
+                
+                //Guardar el usuario en la BD
+                $resultado=$usuario->guardar();
+
+                //Redireccionar
+                if($resultado){
+                    header('Location: /');
+                }
+            }
+            //debuguear($usuario);
         }
 
+        $alertas=Usuario::getAlertas();
         //Muestra la vista
         $router->render('auth/reestablecer',[
-            'titulo'=>'Reestablecer Password'
+            'titulo'=>'Reestablecer Password',
+            'alertas'=>$alertas,
+            'mostrar'=>$mostrar
         ]);
     }
+
     public static function mensaje(Router $router){
     
         //Muestra la vista
@@ -140,22 +214,23 @@ class LoginController{
             'titulo'=>'Mensaje de Conformacion'
         ]);
     }
+
     public static function confirmar(Router $router){
-    $token =s($_GET['token']);
+        $token =s($_GET['token']);
     
-    //Mostrar token del usuario en la vista
-    //debuguear($token);
+        //Mostrar token del usuario en la vista
+        //debuguear($token);
 
-    //Si no encuentra token, manda a la pagina principal.
-    if(!$token) header('Location: /');
+        //Si no encuentra token, manda a la pagina principal.
+        if(!$token) header('Location: /');
 
-    //Encontrar al usuairo con este token:
-    $usuario=Usuario::where('token',$token);
+         //Encontrar al usuairo con este token:
+        $usuario=Usuario::where('token',$token);
 
-    if(empty($usuario)){
+        if(empty($usuario)){
             //Si esta vacio este usuario/token
         Usuario::setAlerta('error','Token no valido :(');
-    }else{
+            }else{
         //Confirmar la cuenta
         $usuario->confirmado=1;
         $usuario->token=null;
@@ -166,9 +241,9 @@ class LoginController{
 
         Usuario::setAlerta('exito','Cuenta confirmada correntamente :3');
 
-    }
+        }
 
-    $alertas=Usuario::getAlertas();
+        $alertas=Usuario::getAlertas();
 
         //Muestra la vista
         $router->render('auth/confirmar',[

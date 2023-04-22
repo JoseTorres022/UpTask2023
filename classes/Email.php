@@ -17,31 +17,62 @@ class Email{
     //Estructura para el envio de confirmacion del correo
     public function enviarConfirmacion(){
         $mail = new PHPMailer();
-$mail->isSMTP();
-$mail->Host = 'sandbox.smtp.mailtrap.io';
-$mail->SMTPAuth = true;
-$mail->Port = 2525;
-$mail->Username = 'cdcc9e439d43bd';
-$mail->Password = '19d31c2f5b999a';
+        $mail->isSMTP();
+        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->SMTPAuth = true;
+        $mail->Port = 2525;
+        $mail->Username = 'cdcc9e439d43bd';
+        $mail->Password = '19d31c2f5b999a';
 
-$mail->setFrom('cuentas@uptask.com');
-$mail->addAddress('cuentas@uptask.com', 'uptask.com');
-$mail->Subjet='Confirma tu cuenta';
+        $mail->setFrom('cuentas@uptask.com');
+        $mail->addAddress('cuentas@uptask.com', 'uptask.com');
+        $mail->Subjet='Confirma tu cuenta';
 
-$mail->isHTML(TRUE);
-$mail->CharSet='UTF-8';
+        $mail->isHTML(TRUE);
+        $mail->CharSet='UTF-8';
 
-$contenido='<html>';
-$contenido .="<p><strong>Hola " . $this->nombre . "</strong> Has creado tu cuenta en Uptask, 
-solo debes confirmala en el siguiente enlace:</p>";
-$contenido .="<p> Presiona aqui: <a href='http://localhost:3000/confirmar?token=" . 
-$this->token . "'> Confirma tu Cuenta</a></p>";
-$contenido .="<p> Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>";
-$contenido .='</html>';
+        $contenido='<html>';
+        $contenido .="<p><strong>Hola " . $this->nombre . "</strong> Has creado tu cuenta en Uptask, 
+        solo debes confirmala en el siguiente enlace:</p>";
+        $contenido .="<p> Presiona aqui: <a href='http://localhost:3000/confirmar?token=" . 
+        $this->token . "'> Confirma tu Cuenta</a></p>";
+        $contenido .="<p> Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>";
+        $contenido .='</html>';
 
-$mail->Body=$contenido;
+        $mail->Body=$contenido;
 
-//Enviar el email
-$mail->send();
+        //Enviar el email
+        $mail->send();
+    }
+
+    public function enviarInstrucciones(){
+        //Credenciales de PHPMailer
+        $mail = new PHPMailer();
+        $mail->isSMTP();
+        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->SMTPAuth = true;
+        $mail->Port = 2525;
+        $mail->Username = 'cdcc9e439d43bd';
+        $mail->Password = '19d31c2f5b999a';
+
+        $mail->setFrom('cuentas@uptask.com');
+        $mail->addAddress('cuentas@uptask.com', 'uptask.com');
+        $mail->Subjet='Reestablece tu password';
+
+        $mail->isHTML(TRUE);
+        $mail->CharSet='UTF-8';
+
+        $contenido='<html>';
+        $contenido .="<p><strong>Hola " . $this->nombre . "</strong> Parece que has olvidado tu 
+        password, sigue el siguiente enlace para recuperarlo:</p>";
+        $contenido .="<p> Presiona aqui: <a href='http://localhost:3000/reestablecer?token=" . 
+        $this->token . "'>Reestablecer Password</a></p>";
+        $contenido .="<p> Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>";
+        $contenido .='</html>';
+
+        $mail->Body=$contenido;
+
+        //Enviar el email
+        $mail->send();
     }
 }

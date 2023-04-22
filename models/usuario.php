@@ -31,13 +31,38 @@ class Usuario extends ActiveRecord{
             self::$alertas['error'][]='El Password de Usuario es Obligatorio';
         }
 
-        //Validar extension de l password
+        //Validar extension del password
         if(strlen ($this->password)<6){
             self::$alertas['error'][]='El Password por lo menos debe ser de 6 caracterres';
         }
         //Validar sin los dos password son diferentes o iguales
         if($this->password !== $this->password2){
             self::$alertas['error'][]='Los Passwords son diferentes';
+        }
+        return self::$alertas;
+    }
+
+    //Validar un Email
+    public function validarEmail(){
+        if(!$this->email){
+            self::$alertas['error'][]='El Email es Obligatorio';
+        }
+        if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
+            self::$alertas['error'][]='Email no valido';
+        }
+        return self::$alertas;
+    }
+
+    //Valida el Password
+    public function validarPassword(){
+        //Validar password de usuario u obligatorio
+        if(!$this->password){
+            self::$alertas['error'][]='El Password de Usuario es Obligatorio';
+        }
+
+        //Validar extension del password
+        if(strlen ($this->password)<6){
+            self::$alertas['error'][]='El Password por lo menos debe ser de 6 caracterres';
         }
         return self::$alertas;
     }
