@@ -14,6 +14,23 @@ class Usuario extends ActiveRecord{
         $this->token=$args['token'] ??'';
         $this->confirmado=$args['confirmado'] ?? 0;
     }
+    //Validar el Login del Usuario
+    public function validarLogin(){
+        //Validar email de usuario u obligatorio
+        if(!$this->email){
+            self::$alertas['error'][]='El Email de Usuario es Obligatorio';
+        }
+        //Validar formato del Email
+        if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
+            self::$alertas['error'][]='Email no valido';
+        }
+        //Validar password de usuario u obligatorio
+        if(!$this->password){
+            self::$alertas['error'][]='El Password de Usuario es Obligatorio';
+        }
+        return self::$alertas;
+    }
+
     //Validacion para cuentas nuevaas
     public function validarNuevaCuenta(){
         //Validar nombre de usuario  u obligatorio
@@ -69,7 +86,7 @@ class Usuario extends ActiveRecord{
 
     //Hashea el password del usuario
     public function hashPassword(){
-$this->password=password_hash($this->password, PASSWORD_BCRYPT);
+        $this->password=password_hash($this->password, PASSWORD_BCRYPT);
     }
 
     //Generar un token para el usuario
