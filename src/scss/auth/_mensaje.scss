@@ -6,4 +6,9 @@
     .uptask{
         @include m.textoDegradado(v.$naranja);
     }
+    .acciones{
+        a{
+            color: v.$naranja;
+        }
+    }
 }  
