@@ -24,10 +24,14 @@ class DashboardController{
         session_start();
 
         //Pretegiendo el dashboard
-        //isAuth();
+        isAuth();
+
+        //Alertas
+        $alertas=[];
 
         //Renderizar la vista Index
         $router->render('dashboard/crear-proyecto',[
+            'alertas'=>$alertas,
             'titulo'=>'Crear Proyecto'
         ]);
     }
