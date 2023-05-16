@@ -10,15 +10,21 @@ class DashboardController
     public static function index(Router $router)
     {
 
+
         //mantiene la session
         session_start();
 
         //Pretegiendo el dashboard
         isAuth();
 
+        $id = $_SESSION['id'];
+
+        $proyectos = Proyecto::belongsTo('propietarioid', $id);
+
         //Renderizar la vista Index
         $router->render('dashboard/index', [
-            'titulo' => 'Proyectos'
+            'titulo' => 'Proyectos',
+            'proyectos' => $proyectos
         ]);
     }
 
@@ -63,9 +69,23 @@ class DashboardController
         ]);
     }
 
-    public static function proyecto(Router $router){
+    public static function proyecto(Router $router)
+    {
+        session_start();
+        isAuth();
 
-        $router->render('dashboard/proyecto')
+        $token = $_GET['id'];
+        if (!$token) header('Location: /dashboard');
+
+        //Revisar si la persona es quien lo creo
+        $proyecto = Proyecto::where('url', $token);
+        if ($proyecto->propietarioid !== $_SESSION['id']) {
+            header('Location: /dashboard');
+        }
+
+        $router->render('dashboard/proyecto', [
+            'titulo' => $proyecto->proyecto
+        ]);
     }
 
 
